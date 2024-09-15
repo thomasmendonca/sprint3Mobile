@@ -1,17 +1,16 @@
-// pages/PlanSelect.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     View,
     Text,
     StyleSheet,
     FlatList
 } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import colors from "../../styles/colors";
 import { Header } from "../components/Header";
 import fonts from "../../styles/fonts";
 import { RestaurantCard } from "../components/RestaurantCard";
 import { EnviromentButton } from "../components/EnviromentButton";
-import wateringImg from '../assets/watering.png'
 
 interface RestaurantProps {
     id: string;
@@ -23,11 +22,23 @@ interface RestaurantProps {
     description: string;
 }
 
-
-
 export function PlanSelect() {
     const [activeEnvironment, setActiveEnvironment] = useState<string | null>(null);
     const [activeRestaurantId, setActiveRestaurantId] = useState<string | null>(null);
+    const [userName, setUserName] = useState<string | null>(null);
+
+    useEffect(() => {
+        async function fetchUserName() {
+            try {
+                const name = await AsyncStorage.getItem('@user_name');
+                setUserName(name);
+            } catch (error) {
+                console.error('Failed to load name:', error);
+            }
+        }
+
+        fetchUserName();
+    }, []);
 
     const handleEnvironmentPress = (environment: string) => {
         setActiveEnvironment(environment);
@@ -40,11 +51,12 @@ export function PlanSelect() {
     const renderHeader = () => (
         <View style={styles.headerContainer}>
             <Header />
-            <Text style={styles.title}>Qual prato</Text>
-            <Text style={styles.subtitle}>você gostaria de experimentar hoje?</Text>
+            <Text style={styles.title}>{userName && <Text style={styles.welcome}>Bem-vindo, {userName}!</Text>}</Text>
+            <Text style={styles.subtitle}> Qual prato você gostaria de experimentar hoje?</Text>
+            
             <View style={styles.environmentContainer}>
                 <FlatList
-                    data={data} 
+                    data={data}
                     renderItem={({ item }) => (
                         <EnviromentButton
                             title={item}
@@ -97,14 +109,22 @@ const styles = StyleSheet.create({
         fontSize: 17,
         color: colors.heading,
         fontFamily: fonts.heading,
-        lineHeight: 20,
+        lineHeight: 40,
         marginTop: 15,
+        
     },
     subtitle: {
         fontFamily: fonts.text,
         fontSize: 17,
         lineHeight: 20,
         color: colors.heading,
+    },
+    welcome: {
+        fontFamily: fonts.heading,
+        fontSize: 20,
+        color: colors.green,
+        textAlign: 'center',
+        marginVertical: 10,
     },
     environmentContainer: {
         marginVertical: 15,
@@ -127,14 +147,14 @@ const restaurants: RestaurantProps[] = [
     { id: '7', name: 'Taco Fiesta', rating: 4.4, type: 'Mexicana', distance: 2.3, description: 'Tacos autênticos e pratos mexicanos tradicionais.', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQFOdESBf_QDcF5L0DWuJMyO3hAHcF_c1rXYw&s' },
     { id: '8', name: 'Café de Paris', rating: 4.6, type: 'Francesa', distance: 1.5, description: 'Delícias da culinária francesa com um toque sofisticado.', image: 'https://baggiocafe.com.br/cdn/shop/articles/TSC_01.jpg?v=1706894812' },
     { id: '9', name: 'Spicy Thai', rating: 4.7, type: 'Tailandesa', distance: 2.8, description: 'Pratos tailandeses picantes e saborosos.', image: 'https://www.baressp.com.br/bares/fotos/seupimenta1.jpg' },
-    
-    
+
+
 ];
 const data = [
-    'Italiana', 
-    'Japonesa', 
-    'Hamburgueria', 
-    'Saladas', 
+    'Italiana',
+    'Japonesa',
+    'Hamburgueria',
+    'Saladas',
     'Sobremesas',
     'Mexicana',
     'Chinesa',

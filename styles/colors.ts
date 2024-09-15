@@ -16,4 +16,8 @@ export default {
   blue_light: '#EBF6FF',
 
   red: '#E83F5B',
+
+  textDisabled: '#63c58a',
+  bgDisabled:'#e1f7ea'
+
 };
