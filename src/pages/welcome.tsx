@@ -23,18 +23,18 @@ export function Welcome() {
 
     const navigation = useNavigation();
 
-    function handleStart(){
+    function handleStart() {
         navigation.navigate("UserIdentification")
     }
-    
+
 
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.wrapper}>
                 <Text style={styles.title}>
-                    Gerencia {'\n'}
-                    suas plantas de {'\n'}
-                    forma fácil
+                    Descubra {'\n'}
+                    seus pratos favoritos {'\n'}
+                    com facilidade !
                 </Text>
 
                 <Image
@@ -43,10 +43,11 @@ export function Welcome() {
                     resizeMode="contain"
                 />
 
-
                 <Text style={styles.subtitle}>
-                    Não esqueça mais de regas suas plantas.
-                    Nós cuidamos de lembra você sempre que precisar.
+                    Não se perca mais nas opções. {'\n'}
+                    Nós te ajudamos a encontrar {'\n'}
+                    suas comidas preferidas e 
+                    os melhores restaurantes perto de você usando IA.
                 </Text>
 
                 <TouchableOpacity
@@ -62,7 +63,7 @@ export function Welcome() {
                         />
                     </Text>
                 </TouchableOpacity>
-              
+
 
 
             </View>
@@ -74,10 +75,10 @@ const styles = StyleSheet.create(
     {
         container: {
             flex: 1,
-            
+
 
         },
-        wrapper:{
+        wrapper: {
             flex: 1,
             alignItems: "center",
             justifyContent: "space-around",
@@ -104,13 +105,15 @@ const styles = StyleSheet.create(
 
         image: {
             height: Dimensions.get("window").width * 0.7,
+            width: Dimensions.get("window").width * 0.7,
+            borderRadius: 500,
 
         },
         button: {
             backgroundColor: colors.green,
             justifyContent: 'center',
             alignItems: "center",
-            borderRadius: 16,
+            borderRadius: 5,
             marginBottom: 10,
             height: 56,
             width: 56,
@@ -121,7 +124,7 @@ const styles = StyleSheet.create(
             fontSize: 32,
 
         },
-        
+
 
     }
 )

@@ -25,7 +25,7 @@ export function Confirmation() {
         <SafeAreaView style={styles.container}>
             <View style={styles.content}>
                 <Text style={styles.emoji}>
-                    😎
+                    😋
                 </Text>
 
                 <Text style={styles.title}>
@@ -33,7 +33,7 @@ export function Confirmation() {
                 </Text>
 
                 <Text style={styles.subtitle}>
-                    Agora vamos cuidar das suas plantinhas com muito cuidado.
+                    Vamos cuidar das suas escolhas gastronômicas com muito carinho e precisão.
                 </Text>
                 <View style={styles.footer}>
                     <Button
