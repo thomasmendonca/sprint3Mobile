@@ -1,16 +1,22 @@
+// Parte 2: Usando a API em React Native
+
 import React, { useState, useEffect } from "react";
 import {
     View,
     Text,
     StyleSheet,
-    FlatList
+    FlatList,
+    KeyboardAvoidingView,
+    Platform,
+    Keyboard,
+    TouchableWithoutFeedback,
+    TouchableOpacity
 } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import colors from "../../styles/colors";
 import { Header } from "../components/Header";
 import fonts from "../../styles/fonts";
 import { RestaurantCard } from "../components/RestaurantCard";
-import { EnviromentButton } from "../components/EnviromentButton";
 
 interface RestaurantProps {
     id: string;
@@ -26,6 +32,11 @@ export function PlanSelect() {
     const [activeEnvironment, setActiveEnvironment] = useState<string | null>(null);
     const [activeRestaurantId, setActiveRestaurantId] = useState<string | null>(null);
     const [userName, setUserName] = useState<string | null>(null);
+    const [restaurants, setRestaurants] = useState<RestaurantProps[]>([]);
+    const [filterOptions, setFilterOptions] = useState<string[]>([]);
+    const [selectedDistance, setSelectedDistance] = useState<number | null>(null);
+    const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+    const [isDistanceDropdownOpen, setIsDistanceDropdownOpen] = useState<boolean>(false);
 
     useEffect(() => {
         async function fetchUserName() {
@@ -40,6 +51,43 @@ export function PlanSelect() {
         fetchUserName();
     }, []);
 
+    useEffect(() => {
+        fetchRestaurants();
+    }, [activeEnvironment, selectedDistance]);
+
+    useEffect(() => {
+        fetchFilterOptions();
+    }, []);
+
+    async function fetchRestaurants() {
+        try {
+            let url = 'http://192.168.0.11:5000/restaurants'; // Substitua 192.168.X.X pelo IP local da sua máquina
+            if (activeEnvironment) {
+                url += `?type=${activeEnvironment}`;
+            }
+            const response = await fetch(url);
+            const data = await response.json();
+            let filteredData = data;
+            if (selectedDistance !== null) {
+                filteredData = data.filter((restaurant: RestaurantProps) => restaurant.distance <= selectedDistance);
+            }
+            setRestaurants(filteredData);
+        } catch (error) {
+            console.error('Failed to load restaurants:', error);
+        }
+    }
+
+    async function fetchFilterOptions() {
+        try {
+            const response = await fetch('http://192.168.0.11:5000/restaurants'); // Substitua 192.168.X.X pelo IP local da sua máquina
+            const data: RestaurantProps[] = await response.json();
+            const types = Array.from(new Set(data.map(restaurant => restaurant.type)));
+            setFilterOptions(['Todos', ...types]);
+        } catch (error) {
+            console.error('Failed to load filter options:', error);
+        }
+    }
+
     const handleEnvironmentPress = (environment: string) => {
         setActiveEnvironment(environment);
     }
@@ -48,27 +96,71 @@ export function PlanSelect() {
         setActiveRestaurantId(id);
     }
 
+    const handleDistanceFilterPress = (distance: number | null) => {
+        setSelectedDistance(distance);
+    }
+
     const renderHeader = () => (
         <View style={styles.headerContainer}>
             <Header />
             <Text style={styles.title}>{userName && <Text style={styles.welcome}>Bem-vindo, {userName}!</Text>}</Text>
             <Text style={styles.subtitle}> Qual prato você gostaria de experimentar hoje?</Text>
-            
-            <View style={styles.environmentContainer}>
-                <FlatList
-                    data={data}
-                    renderItem={({ item }) => (
-                        <EnviromentButton
-                            title={item}
-                            active={item === activeEnvironment}
-                            onPress={() => handleEnvironmentPress(item)}
-                        />
-                    )}
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={styles.enviromentList}
-                />
-            </View>
+
+            <TouchableOpacity onPress={() => setIsDropdownOpen(!isDropdownOpen)} style={styles.filterButton}>
+                <Text style={styles.filterButtonText}>Filtrar por tipo de cozinha</Text>
+            </TouchableOpacity>
+
+            {isDropdownOpen && (
+                <View style={styles.dropdownContainer}>
+                    {filterOptions.map((option) => (
+                        <TouchableOpacity
+                            key={option}
+                            onPress={() => {
+                                handleEnvironmentPress(option === 'Todos' ? null : option);
+                                setIsDropdownOpen(false);
+                            }}
+                            style={styles.dropdownItem}
+                        >
+                            <Text style={styles.dropdownItemText}>{option}</Text>
+                        </TouchableOpacity>
+                    ))}
+                </View>
+            )}
+
+            {activeEnvironment && (
+                <Text style={styles.selectedEnvironmentLabel}>
+                    Tipo de cozinha selecionado: {activeEnvironment}
+                </Text>
+            )}
+
+            <TouchableOpacity onPress={() => setIsDistanceDropdownOpen(!isDistanceDropdownOpen)} style={styles.filterButton}>
+                <Text style={styles.filterButtonText}>Filtrar por distância</Text>
+            </TouchableOpacity>
+
+            {isDistanceDropdownOpen && (
+                <View style={styles.dropdownContainer}>
+                    {[null, 1, 3, 5, 10].map((distance) => (
+                        <TouchableOpacity
+                            key={distance !== null ? distance.toString() : 'Todos'}
+                            onPress={() => {
+                                handleDistanceFilterPress(distance);
+                                setIsDistanceDropdownOpen(false);
+                            }}
+                            style={styles.dropdownItem}
+                        >
+                            <Text style={styles.dropdownItemText}>
+                                {distance !== null ? `Até ${distance} km` : 'Todos'}
+                            </Text>
+                        </TouchableOpacity>
+                    ))}
+                </View>
+            )}
+
+            {selectedDistance !== null && (
+                <Text style={styles.selectedDistanceLabel}>
+                    Distância selecionada: Até {selectedDistance} km
+                </Text>
+            )}
         </View>
     )
 
@@ -87,14 +179,28 @@ export function PlanSelect() {
     )
 
     return (
-        <FlatList
-            data={restaurants}
-            keyExtractor={(item) => item.id}
-            renderItem={renderRestaurantItem}
-            ListHeaderComponent={renderHeader}
-            contentContainerStyle={styles.container}
-            ListEmptyComponent={<Text>Sem restaurantes disponíveis</Text>}
-        />
+        <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <View style={{ flex: 1 }}>
+                    <FlatList
+                        data={restaurants}
+                        keyExtractor={(item) => item.id}
+                        renderItem={renderRestaurantItem}
+                        ListHeaderComponent={renderHeader}
+                        contentContainerStyle={styles.container}
+                        ListEmptyComponent={
+                            <View style={styles.emptyContainer}>
+                                <Text style={styles.emptyText}>😞 Sem restaurantes disponíveis</Text>
+                            </View>
+                        }
+                        keyboardShouldPersistTaps="always"
+                    />
+                </View>
+            </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
     )
 }
 
@@ -126,49 +232,60 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginVertical: 10,
     },
-    environmentContainer: {
-        marginVertical: 15,
-    },
-    enviromentList: {
-        height: 50,
-        justifyContent: 'center',
-        paddingBottom: 5,
-        marginLeft: 32,
+    filterButton: {
+        backgroundColor: colors.green,
+        paddingVertical: 10,
+        paddingHorizontal: 15,
+        borderRadius: 10,
+        alignItems: 'center',
         marginVertical: 10,
     },
+    filterButtonText: {
+        color: colors.white,
+        fontFamily: fonts.heading,
+        fontSize: 16,
+    },
+    dropdownContainer: {
+        backgroundColor: colors.white,
+        borderRadius: 10,
+        marginTop: 5,
+        padding: 10,
+        elevation: 5,
+    },
+    dropdownItem: {
+        paddingVertical: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: colors.gray,
+    },
+    dropdownItemText: {
+        fontFamily: fonts.text,
+        fontSize: 16,
+        color: colors.heading,
+    },
+    selectedEnvironmentLabel: {
+        fontFamily: fonts.heading,
+        fontSize: 16,
+        color: colors.green,
+        textAlign: 'center',
+        marginVertical: 10,
+    },
+    selectedDistanceLabel: {
+        fontFamily: fonts.heading,
+        fontSize: 16,
+        color: colors.green,
+        textAlign: 'center',
+        marginVertical: 10,
+    },
+    emptyContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 55,
+    },
+    emptyText: {
+        fontFamily: fonts.text,
+        fontSize: 18,
+        color: colors.heading,
+        textAlign: 'center',
+    },
 })
-const restaurants: RestaurantProps[] = [
-    { id: '1', name: 'La Bella Italia', rating: 4.5, type: 'Italiana', distance: 1.2, description: 'Autêntica comida italiana com um ambiente acolhedor.', image: 'https://restaurantecosi.com.br/wp-content/uploads/2024/01/restaurante-italiano-sp-1.jpg' },
-    { id: '2', name: 'Sushi World', rating: 4.8, type: 'Japonesa', distance: 3.5, description: 'Sushi fresco e pratos tradicionais japoneses.', image: 'https://veganbusiness.com.br/wp-content/uploads/2022/04/sanro-vegetariano.jpeg' },
-    { id: '3', name: 'Burger Haven', rating: 4.2, type: 'Hamburgueria', distance: 2.0, description: 'Hambúrgueres gourmet e batatas fritas irresistíveis.', image: 'https://cdn.abrahao.com.br/base/024/d2d/699/nomes-de-hamburguer-para-cardapio.jpg' },
-    { id: '4', name: 'Pasta Palace', rating: 4.7, type: 'Italiana', distance: 0.9, description: 'Massas artesanais com receitas familiares.', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrrxQd5831GF2593RZlVlsBXdp8PP8ZSeUAQ&s' },
-    { id: '5', name: 'Salad Express', rating: 4.3, type: 'Saladas', distance: 1.8, description: 'Saladas frescas e opções saudáveis para qualquer hora do dia.', image: 'https://img.freepik.com/fotos-premium/salada-de-comida-em-restaurante-self-service_538646-6724.jpg' },
-    { id: '6', name: 'Sweet Treats', rating: 4.6, type: 'Sobremesas', distance: 2.5, description: 'Deliciosas sobremesas e bolos caseiros.', image: 'https://img.freepik.com/fotos-premium/doces-de-chocolate-fundo-comida-doce-com-varios-recheios_84485-1886.jpg' },
-    { id: '7', name: 'Taco Fiesta', rating: 4.4, type: 'Mexicana', distance: 2.3, description: 'Tacos autênticos e pratos mexicanos tradicionais.', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQFOdESBf_QDcF5L0DWuJMyO3hAHcF_c1rXYw&s' },
-    { id: '8', name: 'Café de Paris', rating: 4.6, type: 'Francesa', distance: 1.5, description: 'Delícias da culinária francesa com um toque sofisticado.', image: 'https://baggiocafe.com.br/cdn/shop/articles/TSC_01.jpg?v=1706894812' },
-    { id: '9', name: 'Spicy Thai', rating: 4.7, type: 'Tailandesa', distance: 2.8, description: 'Pratos tailandeses picantes e saborosos.', image: 'https://www.baressp.com.br/bares/fotos/seupimenta1.jpg' },
-
-
-];
-const data = [
-    'Italiana',
-    'Japonesa',
-    'Hamburgueria',
-    'Saladas',
-    'Sobremesas',
-    'Mexicana',
-    'Chinesa',
-    'Tailandesa',
-    'Indiana',
-    'Grega',
-    'Francesa',
-    'Vegana',
-    'Sushi',
-    'Barbecue',
-    'Mariscos',
-    'Café',
-    'Fusion',
-    'Middle Eastern',
-    'Turca',
-    'Brasileira'
-];
