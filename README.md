@@ -53,7 +53,7 @@ Antes de rodar o projeto no Expo, você precisa rodar a API para que a aplicaç�
 
 
 Para fazer o projeto funcionar corretamente, é necessário substituir o IP local da máquina onde está rodando a API. Esse IP deve ser utilizado nas funções fetchRestaurants() e fetchFilterOptions() do código das páginas Login.tsx e PlantSelect.tsx .
-- ** PlantSelect.tsx **
+- PlantSelect.tsx
 ``` Typescript
    async function fetchRestaurants() {
         try {
@@ -73,7 +73,7 @@ Para fazer o projeto funcionar corretamente, é necessário substituir o IP loca
         }
     }
 ```
-- ** Login.tsx **
+- Login.tsx 
 ``` Typescript
 const handleLogin = async () => {
         try {
