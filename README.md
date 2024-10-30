@@ -18,7 +18,7 @@ npm install -g expo-cli
 Faça o clone do projeto para a sua máquina local:
 
 ```bash
-git clone [https://github.com/thomasmendonca/sprint3Mobile]
+git clone https://github.com/thomasmendonca/sprint3Mobile
 cd sprint3Mobile
 ```
 
