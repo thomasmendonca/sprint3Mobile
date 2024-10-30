@@ -1,9 +1,9 @@
 ### Sprint 4
-Gabriel Augusto Fernandes - RM: 98986
-Kauê Fernandes Braz - RM: 97768
-Mariana Trentino Albano - RM: 551154
-Matheus Dantas de Sousa - RM: 98406
-Thomas Nícolas de Melo Mendonça - RM: 99832
+-Gabriel Augusto Fernandes - RM: 98986
+-Kauê Fernandes Braz - RM: 97768
+-Mariana Trentino Albano - RM: 551154
+-Matheus Dantas de Sousa - RM: 98406
+-Thomas Nícolas de Melo Mendonça - RM: 99832
 
 🚀 Como subir o projeto no Expo 
 
