@@ -1,4 +1,4 @@
-### Sprint 4
+# Sprint 4
 - Gabriel Augusto Fernandes - RM: 98986
 - Kauê Fernandes Braz - RM: 97768
 - Mariana Trentino Albano - RM: 551154
