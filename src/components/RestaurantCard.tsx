@@ -64,18 +64,21 @@ const styles = StyleSheet.create({
         marginHorizontal: 16,
         overflow: 'hidden',
         padding: 10,
+        
     },
     activeCard: {
         borderColor: colors.green,
-        borderWidth: 2,
+        borderWidth: 1,
+        
+        
     },
     image: {
         height: Dimensions.get("window").width * 0.25,
-        width: Dimensions.get("window").width * 0.4
+        width: Dimensions.get("window").width * 0.35
     },
     infoContainer: {
         flex: 1,
-        paddingHorizontal:15,
+        paddingHorizontal:5,
     },
     name: {
         fontSize: 18,

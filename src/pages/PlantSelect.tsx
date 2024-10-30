@@ -1,5 +1,3 @@
-// Parte 2: Usando a API em React Native
-
 import React, { useState, useEffect } from "react";
 import {
     View,
@@ -17,6 +15,7 @@ import colors from "../../styles/colors";
 import { Header } from "../components/Header";
 import fonts from "../../styles/fonts";
 import { RestaurantCard } from "../components/RestaurantCard";
+
 
 interface RestaurantProps {
     id: string;
@@ -194,6 +193,9 @@ export function PlanSelect() {
                         ListEmptyComponent={
                             <View style={styles.emptyContainer}>
                                 <Text style={styles.emptyText}>😞 Sem restaurantes disponíveis</Text>
+                                <TouchableOpacity style={styles.reloadButton} onPress={fetchRestaurants}>
+                                    <Text style={styles.reloadButtonText}>Tentar Novamente</Text>
+                                </TouchableOpacity>
                             </View>
                         }
                         keyboardShouldPersistTaps="always"
@@ -286,6 +288,19 @@ const styles = StyleSheet.create({
         fontFamily: fonts.text,
         fontSize: 18,
         color: colors.heading,
+        textAlign: 'center',
+    },
+    reloadButton: {
+        marginTop: 15,
+        backgroundColor: colors.green,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 10,
+    },
+    reloadButtonText: {
+        color: colors.white,
+        fontFamily: fonts.heading,
+        fontSize: 16,
         textAlign: 'center',
     },
 })
