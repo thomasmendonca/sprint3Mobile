@@ -8,47 +8,97 @@ Este tutorial orienta como subir o projeto utilizando o Expo e garantir que a AP
 
 Para rodar o projeto, você precisará do Expo. Instale-o globalmente na sua máquina com o seguinte comando:
 
-bash
-`npm install -g expo-cli`
+```bash
+npm install -g expo-cli
+```
 
 
 ### 2. 📂 Clonar o projeto
 
 Faça o clone do projeto para a sua máquina local:
 
-bash
-`git clone <link_do_projeto>
-cd <nome_do_projeto>`
+```bash
+git clone <link_do_projeto>
+cd <nome_do_projeto>
+```
 
 
 ### 3. 📦 Instalar dependências
 
 Instale as dependências do projeto utilizando o comando:
-
-bash
-`npm install`
+``` bash
+npm install
+```
 
 
 ### 4. ⚙️ Rodar a API
 
 Antes de rodar o projeto no Expo, você precisa rodar a API para que a aplicação possa consumir os dados. Siga os passos:
 
-1. Entre na pasta da API (restaurant-api).
+1. Acesse a API em [https://github.com/thomasmendonca/apirestaurants].
 2. Instale as dependências necessárias:
    
-bash
-  ` npm install`
+`bash
+   npm install`
 
 3. Inicie o servidor da API:
    
-bash
-   `node index.js`
+```bash
+   node index.js
+```
 
    A API será iniciada na porta 5000 (ou outra que esteja definida no código)
 
 ### 5. 🌐 Obter o IP local da máquina
 
-Para fazer o projeto funcionar corretamente, é necessário substituir o IP local da máquina onde está rodando a API. Esse IP deve ser utilizado nas funções fetchRestaurants() e fetchFilterOptions() do código.
+
+Para fazer o projeto funcionar corretamente, é necessário substituir o IP local da máquina onde está rodando a API. Esse IP deve ser utilizado nas funções fetchRestaurants() e fetchFilterOptions() do código das páginas Login.tsx e PlantSelect.tsx .
+- ** PlantSelect.tsx **
+``` Typescript
+   async function fetchRestaurants() {
+        try {
+            let url = 'http://192.168.0.11:5000/restaurants'; // Substitua 192.168.X.X pelo IP local da sua máquina
+            if (activeEnvironment) {
+                url += `?type=${activeEnvironment}`;
+            }
+            const response = await fetch(url);
+            const data = await response.json();
+            let filteredData = data;
+            if (selectedDistance !== null) {
+                filteredData = data.filter((restaurant: RestaurantProps) => restaurant.distance <= selectedDistance);
+            }
+            setRestaurants(filteredData);
+        } catch (error) {
+            console.error('Failed to load restaurants:', error);
+        }
+    }
+```
+- ** Login.tsx **
+``` Typescript
+const handleLogin = async () => {
+        try {
+            const response = await fetch('http://192.168.0.11:5000/login', { // Substitua 192.168.X.X pelo IP local da sua máquina
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }),
+            });
+
+            if (response.status === 401) {
+                Alert.alert('Erro', 'Credenciais inválidas. Por favor, verifique seu nome de usuário e senha.');
+            } else if (response.status === 500) {
+                Alert.alert('Erro', 'Erro no servidor. Tente novamente mais tarde.');
+            } else if (response.ok) {
+                navigation.navigate('UserIdentification');
+            } else {
+                Alert.alert('Erro', 'Algo deu errado, tente novamente. Código de status: ' + response.status);
+            }
+        } catch (error) {
+            Alert.alert('Erro', 'Não foi possível conectar ao servidor. Verifique sua conexão com a internet.');
+        }
+    };
+```
 
 #### 🔍 Como obter o IP local:
 - **Windows**: Execute o comando ipconfig no terminal. Procure por "Endereço IPv4".
@@ -59,9 +109,9 @@ Para fazer o projeto funcionar corretamente, é necessário substituir o IP loca
 
 Para rodar o projeto no Expo, use o comando:
 
-bash
-`npx expo start`
-
+```bash
+npx expo start
+```
 
 Será aberta uma página no seu navegador com um QR Code. Você pode escanear esse QR Code utilizando o aplicativo Expo Go (disponível na App Store ou Google Play) para rodar o projeto no seu dispositivo físico.
 
@@ -69,7 +119,7 @@ Será aberta uma página no seu navegador com um QR Code. Você pode escanear es
 
 Certifique-se de que o dispositivo que está rodando o Expo e a máquina que está rodando a API estejam na **mesma rede**. Caso contrário, não será possível acessar os dados da API no aplicativo.
 
-## 🎯 Peculiaridades do Projeto e Barema de Correção
+## 🎯 Correção e Avaliação do Projeto
 
 Este projeto atende aos requisitos do barema de correção conforme descrito abaixo:
 
