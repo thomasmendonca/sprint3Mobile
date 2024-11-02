@@ -45,8 +45,10 @@ Antes de rodar o projeto no Expo, você precisa rodar a API para que a aplicaç�
 1. Acesse a API em [https://github.com/thomasmendonca/apirestaurants].
 2. Instale as dependências necessárias:
    
-`bash
-   npm install`
+```bash
+   npm install
+```
+2.1 Atenção para a inclusão das credenciais do Firebase ao instalar a API (ler documentação da API)
 
 3. Inicie o servidor da API:
    
