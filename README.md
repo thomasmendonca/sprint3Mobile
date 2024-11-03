@@ -128,13 +128,19 @@ Será aberta uma página no seu navegador com um QR Code. Você pode escanear es
 
 Certifique-se de que o dispositivo que está rodando o Expo e a máquina que está rodando a API estejam na **mesma rede**. Caso contrário, não será possível acessar os dados da API no aplicativo.
 
+### 8. 📶 Login de Acesso ao aplicativo
+```bash
+Usuário: user1
+Senha: senha1
+```
+
 ## 🎯 Correção e Avaliação do Projeto
 
 Este projeto atende aos requisitos do barema de correção conforme descrito abaixo:
 
 ### 1. 🔗 Escolher entre uma API RESTfull, Firebase Realtime Database ou Firebase Firestore para obtenção e gestão dos dados. (50pts)
 
-Foi escolhida uma **API RESTful** para realizar a obtenção e gestão dos dados dos restaurantes. A API foi construída utilizando **Node.js** e **Express**, fornecendo endpoints para listar, criar, atualizar e deletar restaurantes.
+Foi escolhida uma **API RESTful** para realizar a obtenção e gestão dos dados dos restaurantes. A API foi construída utilizando **Node.js** e **Express**, fornecendo endpoints para listar, criar, atualizar e deletar restaurantes. Além disso, a API está integrada com o **Firebase Realtime Database**, garantindo um armazenamento em tempo real, permitindo que os dados dos restaurantes sejam atualizados e sincronizados instantaneamente, proporcionando uma experiência dinâmica e eficiente para os usuários do sistema.
 
 ### 2. ✅ Validação de cenários de erro, com feedback claro e informativo para o usuário. (25pts)
 
